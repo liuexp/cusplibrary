@@ -80,3 +80,56 @@ copying host takes 0.000
 0.01096042
 0.17535739
 ----ELAPSED TIME: 142.89000000s
+
+Reading 345439900 lines takes 139.000
+----ELAPSED TIME: 137.97000000s
+multiplication takes 0.72000
+assignment takes 0.00000
+blas::axpy takes 0.00000
+iteration takes 0.72000
+multiplication takes 0.73000
+assignment takes 0.00000
+blas::axpy takes 0.00000
+iteration takes 0.73000
+multiplication takes 0.74000
+assignment takes 0.00000
+blas::axpy takes 0.00000
+iteration takes 0.74000
+multiplication takes 0.74000
+assignment takes 0.00000
+blas::axpy takes 0.00000
+iteration takes 0.74000
+----ELAPSED TIME: 141.79000000s
+copying host takes 1.000
+----ELAPSED TIME: 142.24000000s
+0.00000000
+0.00000986
+0.00007244
+0.00259589
+0.08760934
+0.31193480
+0.00144866
+0.21452565
+0.00102653
+0.00413334
+0.00148278
+0.05274126
+0.00000443
+0.06253813
+0.14198512
+0.00214412
+0.01346844
+0.00443746
+0.02311691
+0.00130185
+0.00688902
+0.01969884
+0.00398082
+0.01767284
+0.00514294
+0.00133626
+0.04306169
+0.00067237
+0.01096042
+0.17535739
+----ELAPSED TIME: 142.64000000s
