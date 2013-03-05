@@ -8,15 +8,21 @@
 #include <ctime>
 const int N = 23026589;
 const int M = 324874844; 
-const char outFile[] = "test3";
-const float probability = 0.25;
+const char inFile[] = "/media/tmp/graphchi/data/twitter_rv.net";
+const char outFile[] = "/media/tmp/graphchi/data/test4";
+const float probability = 1.01;
 cusp::coo_matrix<int,float,cusp::host_memory> A(N,N,M);
 int maxV=0,lines=0;
 std::vector <std::pair<int,int> > invData;
+std::vector <std::pair<int,int> > tmpV;
 std::vector <std::pair<int, std::pair<int, float> > > outData;
 std::map<int, int> mapped;
 int outDegree[61578414];
-
+const char outFileRow[] = "/media/tmp/graphchi/data/test4row";
+const char outFileCol[] = "/media/tmp/graphchi/data/test4col";
+const char outFileVal[] = "/media/tmp/graphchi/data/test4val";
+int *row, *col;
+float *val;
 void FIXLINE(char *s){
 	int l = (int)strlen(s)-1;
 	if(s[l] == '\n')s[l]=0;
@@ -29,11 +35,37 @@ void addVertex(int a){
 	}
 }
 
+void writeBin(){
+	int m = lines;
+	FILE *frow = fopen(outFileRow, "wb");
+	FILE *fcol = fopen(outFileCol, "wb");
+	FILE *fval = fopen(outFileVal, "wb");
+	fwrite(row, sizeof(int), m, frow);
+	free(row);
+	fwrite(col, sizeof(int), m, fcol);
+	free(col);
+	fwrite(val, sizeof(int), m, fval);
+	free(val);
+	fclose(frow);
+	fclose(fcol);
+	fclose(fval);
+}
+
+void writeText(){
+	FILE *fout = fopen(outFile,"w");
+	int m = outData.size();
+	for(int i=0;i<m;i++){
+		fprintf(fout,"%d %d %.10f\n", row[i], col[i], val[i]);
+	}
+	fclose(fout);
+}
+
+
 void readConv(float prob){
 	time_t time0,time1;
 	double diff;
 	char s[1024];
-	FILE *fp = fopen("twitter_rv.net","r");
+	FILE *fp = fopen(inFile,"r");
 	int originalMaxV = 0;
 	memset(outDegree, 0, sizeof(outDegree[0])*61578414);
 	int curline = 0;
@@ -74,29 +106,42 @@ void readConv(float prob){
 		if(outDegree[a] == 0 || outDegree[b] == 0)
 			continue;
 		lines++;
-		addVertex(a);
-		addVertex(b);
 	}
-	time(&time1);
-	diff = difftime(time1, time0);
-	printf("unique renaming takes %.3f\n",diff);
-	printf("%d,%d\n", maxV, lines);
-	time(&time0);
-	FILE *fout = fopen(outFile,"w");
-	for(int i=0;i<n;i++){
+	int m = lines;
+	row = (int *)malloc(m* sizeof(int));
+	col = (int *)malloc(m * sizeof(int));
+	val = (float *)malloc(m * sizeof(float));
+	for(int i=0,j=0;i<n;i++){
 		int a = invData[i].second, b = invData[i].first;
-		//if(outDegreeTemp[a] == 0||outDegreeTemp[b] ==0)continue;
-		if(outDegree[a] == 0 || outDegree[b] == 0)continue;
-		outData.push_back(std::make_pair(mapped[b], std::make_pair(mapped[a], 1.0/outDegree[b])));
+		if(outDegree[a] == 0 || outDegree[b] == 0)
+			continue;
+	//	addVertex(a);
+	//	addVertex(b);
+		maxV = max(maxV, max(a,b));
+		row[j] = b;
+		col[j] = a;
+		val[j] = 1.0/outDegree[b];
+		j++;
 	}
-	sort(outData.begin(), outData.end());
-	int m = outData.size();
-	for(int i=0;i<m;i++){
-		int a = outData[i].first, b = outData[i].second.first;
-		float c = outData[i].second.second;
-		fprintf(fout,"%d %d %.8f\n", a, b, c);
-	}
-	fclose(fout);
+	//time(&time1);
+	//diff = difftime(time1, time0);
+	//printf("unique renaming takes %.3f\n",diff);
+	printf("%d,%d\n", maxV, lines);
+	//time(&time0);
+	//for(int i=0;i<n;i++){
+	//	int a = invData[i].second, b = invData[i].first;
+	//	//if(outDegreeTemp[a] == 0||outDegreeTemp[b] ==0)continue;
+	//	if(outDegree[a] == 0 || outDegree[b] == 0)continue;
+	//	outData.push_back(std::make_pair(mapped[b], std::make_pair(mapped[a], 1.0/outDegree[b])));
+	//}
+	//mapped.clear();
+	invData.clear();
+	invData.swap(tmpV);
+	//printf("start sorting\n");
+	//sort(outData.begin(), outData.end());
+	//printf("sorting done\n");
+	writeText();
+	writeBin();
 	fclose(fp);
 }
 

@@ -9,17 +9,33 @@
 #include <ctime>
 #include <cuda.h>
 #include <cuda_runtime.h>
-const int N = 61578170;
-const int M = 345439900;
+const int N = 61578044;//61578171;                                                                              
+const int M =345389469; //345439900;
 const float DAMPINGFACTOR = 0.85;
+const char mtxBinRowFile[] = "/media/tmp/graphchi/data/test4row";
+const char mtxBinColFile[] = "/media/tmp/graphchi/data/test4col";
+const char mtxBinValFile[] = "/media/tmp/graphchi/data/test4val";
 cusp::coo_matrix<int, float, cusp::host_memory> B(N,N,M);
 const int niter = 4;
-const char mtxFile[] = "/media/tmp/graphchi/data/test3";
+const char mtxFile[] = "/media/tmp/graphchi/data/test4";
 
 void FIXLINE(char *s){
 	int l = (int)strlen(s)-1;
 	if(s[l] == '\n')s[l]=0;
 }
+
+void readBinMatrix(int *row, int *col, float *val, int m){
+	FILE *fprow = fopen(mtxBinRowFile,"rb");
+	FILE *fpcol = fopen(mtxBinColFile,"rb");
+	FILE *fpval = fopen(mtxBinValFile,"rb");
+	fread(row, sizeof(int), m, fprow);
+	fread(col, sizeof(int), m, fpcol);
+	fread(val, sizeof(float), m, fpval);
+	fclose(fprow);
+	fclose(fpcol);
+	fclose(fpval);
+}
+
 
 void my_read_matrix(){
 	int cnt=0;
