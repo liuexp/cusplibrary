@@ -9,7 +9,7 @@
 const int N = 23026589;
 const int M = 324874844; 
 const char inFile[] = "/media/tmp/graphchi/data/twitter_rv.net";
-const char outFile[] = "/media/tmp/graphchi/data/test4";
+const char outFile[] = "/media/tmp/graphchi/data/test3";
 const float probability = 1.01;
 cusp::coo_matrix<int,float,cusp::host_memory> A(N,N,M);
 int maxV=0,lines=0;
@@ -17,6 +17,7 @@ std::vector <std::pair<int,int> > invData;
 std::vector <std::pair<int,int> > tmpV;
 std::vector <std::pair<int, std::pair<int, float> > > outData;
 std::map<int, int> mapped;
+const int maxDegree = 61578414;
 int outDegree[61578414];
 const char outFileRow[] = "/media/tmp/graphchi/data/test4row";
 const char outFileCol[] = "/media/tmp/graphchi/data/test4col";
@@ -53,7 +54,7 @@ void writeBin(){
 
 void writeText(){
 	FILE *fout = fopen(outFile,"w");
-	int m = outData.size();
+	int m = lines;
 	for(int i=0;i<m;i++){
 		fprintf(fout,"%d %d %.10f\n", row[i], col[i], val[i]);
 	}
@@ -141,10 +142,10 @@ void readConv(float prob){
 	//sort(outData.begin(), outData.end());
 	//printf("sorting done\n");
 	writeText();
-	writeBin();
+	//writeBin();
 	fclose(fp);
 }
-
+// Matrix Market file output
 void writeConv(){
 	int cnt=0;
 	FILE *fp = fopen(outFile,"r");
