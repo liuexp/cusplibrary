@@ -18,7 +18,7 @@ std::vector <std::pair<int,int> > tmpV;
 std::vector <std::pair<int, std::pair<int, float> > > outData;
 std::map<int, int> mapped;
 const int maxDegree = 61578414;
-int outDegree[61578414];
+int outDegree[maxDegree + 1];
 const char outFileRow[] = "/media/tmp/graphchi/data/test4row";
 const char outFileCol[] = "/media/tmp/graphchi/data/test4col";
 const char outFileVal[] = "/media/tmp/graphchi/data/test4val";
@@ -102,32 +102,25 @@ void readConv(float prob){
 	diff = difftime(time1, time0);
 	printf("here counting outdegrees takes %.3f\nstart removing redundant vertices and renaming the rest\n", diff);
 	time(&time0);
-	for(int i=0;i<n;i++){
-		int a = invData[i].second, b = invData[i].first;
-		if(outDegree[a] == 0 || outDegree[b] == 0)
-			continue;
-		lines++;
-	}
-	int m = lines;
+	int m = curline;
+	lines = m;
 	row = (int *)malloc(m* sizeof(int));
 	col = (int *)malloc(m * sizeof(int));
 	val = (float *)malloc(m * sizeof(float));
 	for(int i=0,j=0;i<n;i++){
 		int a = invData[i].second, b = invData[i].first;
-		if(outDegree[a] == 0 || outDegree[b] == 0)
-			continue;
 	//	addVertex(a);
 	//	addVertex(b);
 		maxV = max(maxV, max(a,b));
 		row[j] = b;
 		col[j] = a;
-		val[j] = 1.0/outDegree[b];
+		val[j] = 1.0/outDegree[a];
 		j++;
 	}
 	//time(&time1);
 	//diff = difftime(time1, time0);
 	//printf("unique renaming takes %.3f\n",diff);
-	printf("%d,%d\n", maxV, lines);
+	printf("%d,%d\n", maxV+1, lines);
 	//time(&time0);
 	//for(int i=0;i<n;i++){
 	//	int a = invData[i].second, b = invData[i].first;
@@ -141,8 +134,8 @@ void readConv(float prob){
 	//printf("start sorting\n");
 	//sort(outData.begin(), outData.end());
 	//printf("sorting done\n");
-	writeText();
-	//writeBin();
+	//writeText();
+	writeBin();
 	fclose(fp);
 }
 // Matrix Market file output
